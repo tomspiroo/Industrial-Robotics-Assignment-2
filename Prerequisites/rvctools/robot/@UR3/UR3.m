@@ -38,7 +38,6 @@ classdef UR3 < handle
              
             self.model = SerialLink([L1 L2 L3 L4 L5 L6],'name',name);
         end
-
         %% PlotAndColourRobot
         % Given a robot index, add the glyphs (vertices and faces) and
         % colour them in if data is available 
