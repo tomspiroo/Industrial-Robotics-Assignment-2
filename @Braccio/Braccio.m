@@ -32,7 +32,7 @@ classdef Braccio < handle
             L(1) = Link('d', 0.0715, 'a', 0, 'alpha', -1.5708,'offset',0);
             L(2) = Link('d', 0, 'a', -0.125, 'alpha', 0, 'offset', 1.5708);
             L(3) = Link('d', 0, 'a', -0.125, 'alpha', 0,'offset',0);
-            L(4) = Link('d', 0, 'a', -0.125, 'alpha', 1.5708,'offset',-1.5708);
+            L(4) = Link('d', 0, 'a', 0, 'alpha', 1.5708,'offset',-1.5708); %OLD ALPHA 1.5708, OLD A -0.125
             L(5) = Link('d', 0.192, 'a', 0, 'alpha', 0,'offset',0);
 
             % For point cloud and for brick collection.
