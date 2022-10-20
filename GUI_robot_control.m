@@ -16,11 +16,10 @@ hold on;
 ur3.model.base = transl(0.25,0.4,0);
 ur3.model.plot(qur3,'workspace',workspace,'scale',scale);
 
-
-switch gui.PopUpMenu_2.Value
-    case 'Sliders'
+while (1)
         switch gui.PopUpMenu.Value
             case 'UR3'
+
                 while gui.PopUpMenu.Value == "UR3"
                     qur3 = deg2rad([gui.EditField.Value, gui.EditField_2.Value, gui.EditField_3.Value, ... 
                      gui.EditField_4.Value, gui.EditField_5.Value, gui.EditField_6.Value]);
@@ -30,23 +29,12 @@ switch gui.PopUpMenu_2.Value
                     end
                 end
             case 'Braccio'
+
                 while gui.PopUpMenu.Value == "Braccio"
                     qrobot = deg2rad([gui.EditField.Value, gui.EditField_2.Value, gui.EditField_3.Value, ... 
                         gui.EditField_4.Value, gui.EditField_5.Value]);
                     robot.model.animate(qrobot);
                 end
         end
-        
-    case 'X, Y and Z Directions'
-        switch gui.PopUpMenu.Value
-            case 'UR3'
-                while gui.PopUpMenu.Value == "UR3"
-                    tr = ur3.model.fkine(qur3) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
-                    qur3_2 = ur3.model.ikcon(tr);
-                    ur3.model.animate(qur3_2);
-                    qur3 = qur3_2;
-                end
-            case 'Braccio'
-                
-        end
 end
+
