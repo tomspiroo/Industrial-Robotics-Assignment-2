@@ -34,18 +34,18 @@ classdef GeneralModel < handle
         % Given a name (optional), create and return a UR3 robot model
         function GetModel(self)
             pause(0.001);
-            L1 = Link('d',0,'a',0.1,'alpha',0,'offset',0);
+            L1 = Link('d',0,'a',0,'alpha',0,'offset',0);
             self.model = SerialLink(L1,'name',self.name);
+            self.model.base = self.location;
         end
         %% PlotAndColourRobot
         % Given a robot index, add the glyphs (vertices and faces) and
         % colour them in if data is available 
         function PlotAndColourModel(self)%robot,workspace)
-            for linkIndex = 0:self.model.n
+            linkIndex = 1;
                 [ faceData, vertexData, plyData{linkIndex + 1} ] = plyread([self.plyname],'tri'); %#ok<AGROW>                
                 self.model.faces{linkIndex + 1} = faceData;
                 self.model.points{linkIndex + 1} = vertexData;
-            end
 
             % Display robot
             self.model.plot3d(zeros(1,self.model.n),'noarrow','workspace',self.workspace);
