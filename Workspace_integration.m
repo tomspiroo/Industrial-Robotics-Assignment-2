@@ -8,6 +8,7 @@ Dispenser = GeneralModel('Dispenser','DispenserPly.ply', transl(0.2,0,0.42), wor
 Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.6,0.4,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0,0.7,0), workspace);
 Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.6,0.4,0.02), workspace);
+drawnow
 
 hold on
 %% Robots and GUI initilisation
