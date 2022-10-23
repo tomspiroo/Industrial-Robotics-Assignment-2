@@ -40,11 +40,11 @@ if collisionCheck == 1
 end
 %% Run movement
 for i = 1:25
-        if gui.EditFieldMotion.Value == "Robot in motion"
+        if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
             drawnow()
         else
-            while gui.EditFieldMotion.Value == "Robot stopped"
+            while gui.EditFieldMotion.Value == "Robots stopped"
                 ur3.model.plot(QMatrix(i,:));
             end
         end
@@ -52,13 +52,13 @@ end
 disp('UR3: 1.1 Moved to location of cup');
 QMatrix = jtraj(q2,q1,25);
 for i = 1:25
-        if gui.EditFieldMotion.Value == "Robot in motion"
+        if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
             GlassEmpty.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassEmpty.model.animate(0);
             drawnow()
         else
-            while gui.EditFieldMotion.Value == "Robot stopped"
+            while gui.EditFieldMotion.Value == "Robots stopped"
                 ur3.model.plot(QMatrix(i,:));
                 GlassEmpty.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)*  trotx(deg2rad(-90));
                 GlassEmpty.model.animate(0);
@@ -87,7 +87,7 @@ if collisionCheck == 1
         collisionCheck = 0;
         QMatrix = cat(1, QMatrixCheck1, QMatrixCheck2);
     end
-    while ~gui.EditFieldMotion.Value == "Robot in motion"
+    while ~gui.EditFieldMotion.Value == "Robots in motion"
         % Do nothing
     end
 end
@@ -96,13 +96,13 @@ QMatrixCheck1 = jtraj(q1, qWaypoint, 25);
 QMatrixCheck2 = jtraj(qWaypoint, q2, 25);
 QMatrix = cat(1, QMatrixCheck1, QMatrixCheck2);
 for i = 1:50
-    if gui.EditFieldMotion.Value == "Robot in motion"
+    if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
             GlassEmpty.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassEmpty.model.animate(0);
         drawnow()
     else
-        while gui.EditFieldMotion.Value == "Robot stopped"
+        while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
             GlassEmpty.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassEmpty.model.animate(0);
@@ -117,13 +117,13 @@ Tr2 = Tr * transl(0,0.05,0);
 q2 = ur3.model.ikcon(Tr2);
 QMatrix = jtraj(q1, q2, 20);
 for i = 1:20
-    if gui.EditFieldMotion.Value == "Robot in motion"
+    if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
             GlassEmpty.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassEmpty.model.animate(0);
         drawnow()
     else
-        while gui.EditFieldMotion.Value == "Robot stopped"
+        while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
             GlassEmpty.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassEmpty.model.animate(0);
@@ -135,13 +135,13 @@ GlassEmpty.model.base = [1 0 0 -2; 0 1 0 0; 0 0 1 0; 0 0 0 1];
 GlassEmpty.model.animate(0);
 QMatrix = jtraj(q2, q1, 20);
 for i = 1:20
-    if gui.EditFieldMotion.Value == "Robot in motion"
+    if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
         drawnow()
     else
-        while gui.EditFieldMotion.Value == "Robot stopped"
+        while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
@@ -159,13 +159,13 @@ QMatrixPart1 = jtraj(q1, qWaypoint, 13);
 QMatrixPart2 = jtraj(qWaypoint, q2, 12);
 QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
 for i = 1:25
-    if gui.EditFieldMotion.Value == "Robot in motion"
+    if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
         GlassFull.model.animate(0);
         drawnow()
     else
-        while gui.EditFieldMotion.Value == "Robot stopped"
+        while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
@@ -183,14 +183,14 @@ Q1 = qbraccio;
 Q2 = deg2rad([90 0 0 0 0]);
 QMatrix2 = jtraj(Q1,Q2,20);
 for i = 1:20
-    if gui.EditFieldMotion.Value == "Robot in motion"
+    if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
         braccio.model.animate(QMatrix2(i,:));
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
         GlassFull.model.animate(0);
         drawnow()
     else
-        while gui.EditFieldMotion.Value == "Robot stopped"
+        while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
             braccio.model.plot(QMatrix2(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
@@ -206,14 +206,14 @@ tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
 Q2 = braccio.model.ikcon(tr);
 QMatrix2 = jtraj(Q1,Q2,40);
 for i = 1:20
-    if gui.EditFieldMotion.Value == "Robot in motion"
+    if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
         braccio.model.animate(QMatrix2(i,:));
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
         GlassFull.model.animate(0);
         drawnow()
     else
-        while gui.EditFieldMotion.Value == "Robot stopped"
+        while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
             braccio.model.plot(QMatrix2(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
@@ -222,11 +222,11 @@ for i = 1:20
     end
 end
 for i = 21:40
-    if gui.EditFieldMotion.Value == "Robot in motion"
+    if gui.EditFieldMotion.Value == "Robots in motion"
         braccio.model.animate(QMatrix2(i,:));
         drawnow()
     else
-        while gui.EditFieldMotion.Value == "Robot stopped"
+        while gui.EditFieldMotion.Value == "Robots stopped"
             braccio.model.plot(QMatrix2(i,:));
         end
     end
@@ -246,7 +246,7 @@ QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
 Q1 = deg2rad([45 0 0 0 0]);
 QMatrix2 = jtraj(Q2,Q1,50);
 for i = 1:50
-    if gui.EditFieldMotion.Value == "Robot in motion"
+    if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
         braccio.model.animate(QMatrix2(i,:));
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
@@ -255,7 +255,7 @@ for i = 1:50
         Lime.model.animate(0);
         drawnow()
     else
-        while gui.EditFieldMotion.Value == "Robot stopped"
+        while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
             braccio.model.plot(QMatrix2(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
@@ -273,13 +273,13 @@ q1 = q2;
 q2 = deg2rad([-45 -5 0 0 0 0]);
 QMatrix = jtraj(q1,q2,50);
 for i = 1:50
-        if gui.EditFieldMotion.Value == "Robot in motion"
+        if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
             drawnow()
         else
-            while gui.EditFieldMotion.Value == "Robot stopped"
+            while gui.EditFieldMotion.Value == "Robots stopped"
                 ur3.model.plot(QMatrix(i,:));
                 GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
                 GlassFull.model.animate(0);
@@ -290,13 +290,13 @@ disp('UR3: 3. Moved to collect payload from Braccio');
 Q2 = deg2rad([32.4 22.5 30.6 81 0]);
 QMatrix2 = jtraj(Q1,Q2,50);
 for i = 1:50
-        if gui.EditFieldMotion.Value == "Robot in motion"
+        if gui.EditFieldMotion.Value == "Robots in motion"
             braccio.model.animate(QMatrix2(i,:));
             Lime.model.base = braccio.model.fkine(QMatrix2(i,:)) * transl(0,0,0.02) * troty(deg2rad(180));
             Lime.model.animate(0);
             drawnow()
         else
-            while gui.EditFieldMotion.Value == "Robot stopped"
+            while gui.EditFieldMotion.Value == "Robots stopped"
                 braccio.model.plot(QMatrix2(i,:));
                 Lime.model.base = braccio.model.fkine(QMatrix2(i,:)) * transl(0,0,0.02) * troty(deg2rad(180));
                 Lime.model.animate(0);
@@ -308,11 +308,11 @@ Q1 = Q2;
 Q2 = [0 0 0 0 0];
 QMatrix2 = jtraj(Q1,Q2,50);
 for i = 1:50
-        if gui.EditFieldMotion.Value == "Robot in motion"
+        if gui.EditFieldMotion.Value == "Robots in motion"
             braccio.model.animate(QMatrix2(i,:));
             drawnow()
         else
-            while gui.EditFieldMotion.Value == "Robot stopped"
+            while gui.EditFieldMotion.Value == "Robots stopped"
                 braccio.model.plot(QMatrix2(i,:));
             end
         end
@@ -325,13 +325,13 @@ q2 = deg2rad([-45 -4 0 0 -150 0]);
 
 QMatrix = jtraj(q1,q2,50);
 for i = 1:50
-        if gui.EditFieldMotion.Value == "Robot in motion"
+        if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
             drawnow()
         else
-            while gui.EditFieldMotion.Value == "Robot stopped"
+            while gui.EditFieldMotion.Value == "Robots stopped"
                 ur3.model.plot(QMatrix(i,:));
                 GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
                 GlassFull.model.animate(0);
@@ -342,11 +342,11 @@ disp('UR3: 4.1 Moved to payload area and dropped the payload');
 q1 = deg2rad([0 -5 0 0 0 0]);
 QMatrix = jtraj(q2,q1,50);
 for i = 1:50
-        if gui.EditFieldMotion.Value == "Robot in motion"
+        if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
             drawnow()
         else
-            while gui.EditFieldMotion.Value == "Robot stopped"
+            while gui.EditFieldMotion.Value == "Robots stopped"
                 ur3.model.plot(QMatrix(i,:));
             end
         end
