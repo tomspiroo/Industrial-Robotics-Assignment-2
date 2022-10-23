@@ -5,10 +5,10 @@ close all
 workspace = [-1 1 -0.1 1 -1 2];
 BenchtopAndWall = GeneralModel('BenchtopAndWall','BenchtopAndWallPly.ply', transl(0,0,0), workspace);
 Dispenser = GeneralModel('Dispenser','DispenserPly.ply', transl(0.45,0,0.42), workspace);
-Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.6,0.4,0), workspace);
+Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
 GlassFull = GeneralModel('GlassFull','FullglassPly.ply', transl(-2,0.7,0), workspace);
-Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.6,0.4,0.02), workspace);
+Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.25,0.7,0.04), workspace);
 drawnow
 
 hold on
@@ -46,7 +46,7 @@ for i = 1:50
             end
         end
 end
-disp('1.1 Moved to location of cup');
+disp('UR3: 1.1 Moved to location of cup');
 QMatrix = jtraj(q2,q1,50);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robot in motion"
@@ -62,7 +62,7 @@ for i = 1:50
             end
         end
 end
-disp('1.2 Cup collected, returned to origin')
+disp('UR3: 1.2 Cup collected, returned to origin')
 %% UR3 trajectory for collecting liquids
 % Move to location under first liquid dispenser 
 Tr = ur3.model.base *  transl(-0.05,-0.3,0.4) * trotx(deg2rad(90));
@@ -82,7 +82,7 @@ for i = 1:50
         end
     end
 end
-disp('2.1 Cup is under first liquid')
+disp('UR3: 2.1 Cup is under first liquid')
 q1 = q2;
 
 % Collect first liquid
@@ -103,7 +103,7 @@ for i = 1:50
         end
     end
 end
-disp('2.2 Collected first liquid')
+disp('UR3: 2.2 Collected first liquid')
 GlassEmpty.model.base = [1 0 0 -2; 0 1 0 0; 0 0 1 0; 0 0 0 1];
 GlassEmpty.model.animate(0);
 QMatrix = jtraj(q2, q1, 50);
@@ -121,7 +121,7 @@ for i = 1:50
         end
     end
 end
-disp('2.3 Moved back down')
+disp('UR3: 2.3 Moved back down')
 
 % Move to location under second liquid dispenser
 Tr3 = Tr * transl(0.15,0,0);
@@ -141,66 +141,139 @@ for i = 1:50
         end
     end
 end
-disp('2.4 Cup is under second liquid')
+disp('UR3: 2.4 Cup is under second liquid')
 q1 = q2;
 
 % Collect second liquid 
 Tr4 = Tr3 * transl(0,0.05,0);
 q2 = ur3.model.ikcon(Tr4);
 QMatrix = jtraj(q1, q2, 50);
+Q1 = qbraccio;
+Q2 = deg2rad([90 0 0 0 0]);
+QMatrix2 = jtraj(Q1,Q2,50);
 for i = 1:50
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
+        braccio.model.animate(QMatrix2(i,:));
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
         GlassFull.model.animate(0);
         drawnow()
     else
         while gui.EditFieldMotion.Value == "Robot stopped"
             ur3.model.plot(QMatrix(i,:));
+            braccio.model.plot(QMatrix2(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
         end
     end
 end
-disp('2.5 Collected second liquid')
+disp('UR3: 2.5 Collected second liquid')
+disp('Braccio: 1.1 Rotates to face the lime')
 QMatrix = jtraj(q2, q1, 50);
+Q1 = Q2;
+tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
+Q2 = braccio.model.ikcon(tr);
+QMatrix2 = jtraj(Q1,Q2,50);
 for i = 1:50
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
+        braccio.model.animate(QMatrix2(i,:));
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
         GlassFull.model.animate(0);
         drawnow()
     else
         while gui.EditFieldMotion.Value == "Robot stopped"
             ur3.model.plot(QMatrix(i,:));
+            braccio.model.plot(QMatrix2(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
         end
     end
 end
-disp('2.6 Moved back down')
+disp('UR3: 2.6 Moved back down')
+disp('Braccio: 1.2 Moves to collect the lime')
 
 % Return to origin
 q2 = deg2rad([0 -5 0 0 0 0]);
 QMatrix = jtraj(q1, q2, 50);
+Q1 = deg2rad([45 0 0 0 0]);
+QMatrix2 = jtraj(Q2,Q1,50);
 for i = 1:50
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
+        braccio.model.animate(QMatrix2(i,:));
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
         GlassFull.model.animate(0);
+        Lime.model.base = braccio.model.fkine(QMatrix2(i,:)) * transl(0,0,0.02) * troty(deg2rad(180));
+        Lime.model.animate(0);
         drawnow()
     else
         while gui.EditFieldMotion.Value == "Robot stopped"
             ur3.model.plot(QMatrix(i,:));
+            braccio.model.plot(QMatrix2(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
+            Lime.model.base = braccio.model.fkine(QMatrix2(i,:)) * transl(0,0,0.02) * troty(deg2rad(180));
+            Lime.model.animate(0);
         end
     end
 end
-disp('2.7 Returned to origin')
+disp('UR3: 2.7 Returned to origin')
+disp('Braccio: 2. Lime collected and Braccio rotated to offload')
+
+%% UR3 collecting payload from Braccio 
+q1 = q2;
+q2 = deg2rad([-45 -5 0 0 0 0]);
+QMatrix = jtraj(q1,q2,50);
+for i = 1:50
+        if gui.EditFieldMotion.Value == "Robot in motion"
+            ur3.model.animate(QMatrix(i,:));
+            GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
+            GlassFull.model.animate(0);
+            drawnow()
+        else
+            while gui.EditFieldMotion.Value == "Robot stopped"
+                ur3.model.plot(QMatrix(i,:));
+                GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
+                GlassFull.model.animate(0);
+            end
+        end
+end
+disp('UR3: 3. Moved to collect payload from Braccio');
+Q2 = deg2rad([32.4 22.5 30.6 81 0]);
+QMatrix2 = jtraj(Q1,Q2,50);
+for i = 1:50
+        if gui.EditFieldMotion.Value == "Robot in motion"
+            braccio.model.animate(QMatrix2(i,:));
+            Lime.model.base = braccio.model.fkine(QMatrix2(i,:)) * transl(0,0,0.02) * troty(deg2rad(180));
+            Lime.model.animate(0);
+            drawnow()
+        else
+            while gui.EditFieldMotion.Value == "Robot stopped"
+                braccio.model.plot(QMatrix2(i,:));
+                Lime.model.base = braccio.model.fkine(QMatrix2(i,:)) * transl(0,0,0.02) * troty(deg2rad(180));
+                Lime.model.animate(0);
+            end
+        end
+end
+disp('Braccio: 3.1 Deposits lime into cup')
+Q1 = Q2;
+Q2 = [0 0 0 0 0];
+QMatrix2 = jtraj(Q1,Q2,50);
+for i = 1:50
+        if gui.EditFieldMotion.Value == "Robot in motion"
+            braccio.model.animate(QMatrix2(i,:));
+            drawnow()
+        else
+            while gui.EditFieldMotion.Value == "Robot stopped"
+                braccio.model.plot(QMatrix2(i,:));
+            end
+        end
+end
+disp('Braccio: 3.2 Returns to origin')
 
 %% UR3 trajectory for placing filled cup in payload area
-q1 = deg2rad([0 -5 0 0 0 0]);
+q1 = q2;
 q2 = deg2rad([-45 -4 0 0 -150 0]);
 
 QMatrix = jtraj(q1,q2,50);
@@ -218,7 +291,8 @@ for i = 1:50
             end
         end
 end
-disp('3.1 Moved to payload area and dropped the payload');
+disp('UR3: 4.1 Moved to payload area and dropped the payload');
+q1 = deg2rad([0 -5 0 0 0 0]);
 QMatrix = jtraj(q2,q1,50);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robot in motion"
@@ -230,7 +304,7 @@ for i = 1:50
             end
         end
 end
-disp('3.2 UR3 moves mack to origin')
+disp('UR3: 4.2 UR3 moves mack to origin')
 
 %% Functions required for collision detection
 % Some of the below functions were retrieved from lab solutions, and others
