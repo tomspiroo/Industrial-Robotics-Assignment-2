@@ -74,7 +74,7 @@ QMatrix = jtraj(q1, q2, 50);
 collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
 if collisionCheck == 1
     gui.EditFieldMotion.Value = "Obstacle found";
-    display("Potential collision identified. Testing known safe waypoints for alternative.")
+    disp("Potential collision identified. Testing known safe waypoints for alternative.")
     qWaypoint = deg2rad([0 -133 110 25 33 0]);
     QMatrixCheck1 = jtraj(q1, qWaypoint, 25);
     QMatrixCheck2 = jtraj(qWaypoint, q2, 25);
@@ -82,7 +82,7 @@ if collisionCheck == 1
     collisionCheck2 = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
     if collisionCheck1 == 1 || collisionCheck2 == 1
         gui.EditFieldMotion.Value = "Failed pathing";
-        display("Failed to identify safe path. Robot halting.")
+        disp("Failed to identify safe path. Robot halting.")
     else
         collisionCheck = 0;
         QMatrix = cat(1, QMatrixCheck1, QMatrixCheck2);
