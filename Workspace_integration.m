@@ -18,7 +18,7 @@ ur3 = UR3;
 gui = GUI_App;
 
 qbraccio = [0 0 0 0 0];
-qur3 = [0 0 0 0 0 0];
+qur3 = deg2rad([0 -5 0 0 0 0]);
 
 braccio.model.base = transl(-0.25,0.4,0);
 braccio.model.plot(qbraccio);
