@@ -30,13 +30,16 @@ ur3.model.plot(qur3);
 q1 = deg2rad([0 -5 0 0 0 0]);
 q2 = deg2rad([-45 -4 0 0 -150 0]);
 
-QMatrix = jtraj(q1,q2,50); %Calculate Trajectory
+QMatrix = jtraj(q1,q2,25); %Calculate Trajectory
 
 %% Check for collisions
 collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
-display(collisionCheck)
+if collisionCheck == 1
+    gui.EditFieldMotion.Value = "Obstacle found";
+    display("Potential collision identified. Testing known safe waypoints for alternative.")
+end
 %% Run movement
-for i = 1:50
+for i = 1:25
         if gui.EditFieldMotion.Value == "Robot in motion"
             ur3.model.animate(QMatrix(i,:));
             drawnow()
@@ -47,8 +50,8 @@ for i = 1:50
         end
 end
 disp('UR3: 1.1 Moved to location of cup');
-QMatrix = jtraj(q2,q1,50);
-for i = 1:50
+QMatrix = jtraj(q2,q1,25);
+for i = 1:25
         if gui.EditFieldMotion.Value == "Robot in motion"
             ur3.model.animate(QMatrix(i,:));
             GlassEmpty.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
@@ -68,6 +71,30 @@ disp('UR3: 1.2 Cup collected, returned to origin')
 Tr = ur3.model.base *  transl(-0.05,-0.3,0.4) * trotx(deg2rad(90));
 q2 = ur3.model.ikcon(Tr);
 QMatrix = jtraj(q1, q2, 50);
+collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
+if collisionCheck == 1
+    gui.EditFieldMotion.Value = "Obstacle found";
+    display("Potential collision identified. Testing known safe waypoints for alternative.")
+    qWaypoint = deg2rad([0 -133 110 25 33 0]);
+    QMatrixCheck1 = jtraj(q1, qWaypoint, 25);
+    QMatrixCheck2 = jtraj(qWaypoint, q2, 25);
+    collisionCheck1 = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
+    collisionCheck2 = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
+    if collisionCheck1 == 1 || collisionCheck2 == 1
+        gui.EditFieldMotion.Value = "Failed pathing";
+        display("Failed to identify safe path. Robot halting.")
+    else
+        collisionCheck = 0;
+        QMatrix = cat(1, QMatrixCheck1, QMatrixCheck2);
+    end
+    while ~gui.EditFieldMotion.Value == "Robot in motion"
+        % Do nothing
+    end
+end
+qWaypoint = deg2rad([0 -133 110 25 33 0]);
+QMatrixCheck1 = jtraj(q1, qWaypoint, 25);
+QMatrixCheck2 = jtraj(qWaypoint, q2, 25);
+QMatrix = cat(1, QMatrixCheck1, QMatrixCheck2);
 for i = 1:50
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
@@ -84,12 +111,12 @@ for i = 1:50
 end
 disp('UR3: 2.1 Cup is under first liquid')
 q1 = q2;
-
+%% Continue
 % Collect first liquid
 Tr2 = Tr * transl(0,0.05,0);
 q2 = ur3.model.ikcon(Tr2);
-QMatrix = jtraj(q1, q2, 50);
-for i = 1:50
+QMatrix = jtraj(q1, q2, 20);
+for i = 1:20
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
             GlassEmpty.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
@@ -106,8 +133,8 @@ end
 disp('UR3: 2.2 Collected first liquid')
 GlassEmpty.model.base = [1 0 0 -2; 0 1 0 0; 0 0 1 0; 0 0 0 1];
 GlassEmpty.model.animate(0);
-QMatrix = jtraj(q2, q1, 50);
-for i = 1:50
+QMatrix = jtraj(q2, q1, 20);
+for i = 1:20
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
@@ -123,11 +150,17 @@ for i = 1:50
 end
 disp('UR3: 2.3 Moved back down')
 
+%% TEACH
+ur3.model.teach
+%% Continue
 % Move to location under second liquid dispenser
 Tr3 = Tr * transl(0.15,0,0);
 q2 = ur3.model.ikcon(Tr3);
-QMatrix = jtraj(q1, q2, 50);
-for i = 1:50
+qWaypoint = deg2rad([55 -110 85 25 47 0]);
+QMatrixPart1 = jtraj(q1, qWaypoint, 13);
+QMatrixPart2 = jtraj(qWaypoint, q2, 12);
+QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
+for i = 1:25
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
@@ -147,11 +180,11 @@ q1 = q2;
 % Collect second liquid 
 Tr4 = Tr3 * transl(0,0.05,0);
 q2 = ur3.model.ikcon(Tr4);
-QMatrix = jtraj(q1, q2, 50);
+QMatrix = jtraj(q1, q2, 20);
 Q1 = qbraccio;
 Q2 = deg2rad([90 0 0 0 0]);
-QMatrix2 = jtraj(Q1,Q2,50);
-for i = 1:50
+QMatrix2 = jtraj(Q1,Q2,20);
+for i = 1:20
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
         braccio.model.animate(QMatrix2(i,:));
@@ -169,12 +202,12 @@ for i = 1:50
 end
 disp('UR3: 2.5 Collected second liquid')
 disp('Braccio: 1.1 Rotates to face the lime')
-QMatrix = jtraj(q2, q1, 50);
+QMatrix = jtraj(q2, q1, 20);
 Q1 = Q2;
 tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
 Q2 = braccio.model.ikcon(tr);
-QMatrix2 = jtraj(Q1,Q2,50);
-for i = 1:50
+QMatrix2 = jtraj(Q1,Q2,40);
+for i = 1:20
     if gui.EditFieldMotion.Value == "Robot in motion"
         ur3.model.animate(QMatrix(i,:));
         braccio.model.animate(QMatrix2(i,:));
@@ -187,6 +220,16 @@ for i = 1:50
             braccio.model.plot(QMatrix2(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
+        end
+    end
+end
+for i = 21:40
+    if gui.EditFieldMotion.Value == "Robot in motion"
+        braccio.model.animate(QMatrix2(i,:));
+        drawnow()
+    else
+        while gui.EditFieldMotion.Value == "Robot stopped"
+            braccio.model.plot(QMatrix2(i,:));
         end
     end
 end
@@ -310,7 +353,6 @@ disp('UR3: 4.2 UR3 moves mack to origin')
 % Some of the below functions were retrieved from lab solutions, and others
 % were created from scratch using existing functions and lab solutions as a
 % reference.
-
 %% CHECK TRAJECTORY FOR COLLISIONS (JEREMY MANSFIELD 2022)
 % Get Benchtop and Wall FaceNormals
 function result = IsModelCollision(robot,object,qMatrix)
