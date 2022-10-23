@@ -339,7 +339,7 @@ for i = 1:50
         end
 end
 disp('UR3: 4.1 Moved to payload area and dropped the payload');
-q1 = deg2rad([0 -5 0 0 0 0]);
+q1 = deg2rad([0 0 0 0 0 0]);
 QMatrix = jtraj(q2,q1,50);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robots in motion"
@@ -369,9 +369,9 @@ while (1)
             case 'Braccio'
 
                 while gui.PopUpMenu.Value == "Braccio"
-                    qrobot = deg2rad([gui.EditField.Value, gui.EditField_2.Value, gui.EditField_3.Value, ... 
+                    qbraccio = deg2rad([gui.EditField.Value, gui.EditField_2.Value, gui.EditField_3.Value, ... 
                         gui.EditField_4.Value, gui.EditField_5.Value]);
-                    robot.model.animate(qrobot);
+                    braccio.model.animate(qbraccio);
                     if gui.PopUpMenu_2.Value == "X, Y and Z Directions"
                         break;
                     end
@@ -392,10 +392,10 @@ while (1)
                 end
             case 'Braccio'
                 while gui.PopUpMenu.Value == "Braccio"
-                    tr = robot.model.fkine(qrobot) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
-                    qrobot_2 = robot.model.ikcon(tr);
-                    robot.model.animate(qrobot_2);
-                    qrobot = qrobot_2;
+                    tr = braccio.model.fkine(qbraccio) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
+                    qrobot_2 = braccio.model.ikcon(tr);
+                    braccio.model.animate(qrobot_2);
+                    qbraccio = qrobot_2;
                     if gui.PopUpMenu_2.Value == "Sliders"
                         break;
                     end
