@@ -59,6 +59,7 @@ classdef Braccio < handle
 
             % Display robot
             self.model.plot3d(zeros(1,self.model.n),'noarrow','workspace',self.workspace);
+            self.model.plotopt = {'nojoints', 'noarrow', 'noname', 'nowrist'};
             if isempty(findobj(get(gca,'Children'),'Type','Light'))
                 camlight
             end  

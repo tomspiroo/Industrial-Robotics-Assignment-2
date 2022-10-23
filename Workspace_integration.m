@@ -233,8 +233,8 @@ for i = 21:40
 end
 disp('UR3: 2.6 Moved back down')
 disp('Braccio: 1.2 Moves to collect the lime')
-%% Check for valid waypoint
-ur3.model.teach
+% %% Check for valid waypoint
+% ur3.model.teach
 
 %% Continue
 % Return to origin
