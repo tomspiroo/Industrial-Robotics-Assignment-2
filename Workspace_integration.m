@@ -150,8 +150,6 @@ for i = 1:20
 end
 disp('UR3: 2.3 Moved back down')
 
-%% TEACH
-ur3.model.teach
 %% Continue
 % Move to location under second liquid dispenser
 Tr3 = Tr * transl(0.15,0,0);
@@ -235,10 +233,16 @@ for i = 21:40
 end
 disp('UR3: 2.6 Moved back down')
 disp('Braccio: 1.2 Moves to collect the lime')
+%% Check for valid waypoint
+ur3.model.teach
 
+%% Continue
 % Return to origin
+qWaypoint = deg2rad([35 -135 110 25 85 0]);
 q2 = deg2rad([0 -5 0 0 0 0]);
-QMatrix = jtraj(q1, q2, 50);
+QMatrixPart1 = jtraj(q1, qWaypoint, 25);
+QMatrixPart2 = jtraj(qWaypoint, q2, 25);
+QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
 Q1 = deg2rad([45 0 0 0 0]);
 QMatrix2 = jtraj(Q2,Q1,50);
 for i = 1:50
