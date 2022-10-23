@@ -353,6 +353,57 @@ for i = 1:50
 end
 disp('UR3: 4.2 UR3 moves mack to origin')
 
+%% GUI Control of the robot arms
+while (1)
+    while gui.PopUpMenu_2.Value == "Sliders"
+        switch gui.PopUpMenu.Value
+            case 'UR3'
+                while gui.PopUpMenu.Value == "UR3"
+                    qur3 = deg2rad([gui.EditField.Value, gui.EditField_2.Value, gui.EditField_3.Value, ... 
+                     gui.EditField_4.Value, gui.EditField_5.Value, gui.EditField_6.Value]);
+                    ur3.model.animate(qur3);
+                    if gui.PopUpMenu_2.Value == "X, Y and Z Directions"
+                        break;
+                    end
+                end
+            case 'Braccio'
+
+                while gui.PopUpMenu.Value == "Braccio"
+                    qrobot = deg2rad([gui.EditField.Value, gui.EditField_2.Value, gui.EditField_3.Value, ... 
+                        gui.EditField_4.Value, gui.EditField_5.Value]);
+                    robot.model.animate(qrobot);
+                    if gui.PopUpMenu_2.Value == "X, Y and Z Directions"
+                        break;
+                    end
+                end 
+        end
+    end
+    while gui.PopUpMenu_2.Value == "X, Y and Z Directions"
+        switch gui.PopUpMenu.Value
+            case 'UR3'
+                while gui.PopUpMenu.Value == "UR3"
+                    tr = ur3.model.fkine(qur3) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
+                    qur3_2 = ur3.model.ikcon(tr);
+                    ur3.model.animate(qur3_2);
+                    qur3 = qur3_2;
+                    if gui.PopUpMenu_2.Value == "Sliders"
+                        break;
+                    end
+                end
+            case 'Braccio'
+                while gui.PopUpMenu.Value == "Braccio"
+                    tr = robot.model.fkine(qrobot) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
+                    qrobot_2 = robot.model.ikcon(tr);
+                    robot.model.animate(qrobot_2);
+                    qrobot = qrobot_2;
+                    if gui.PopUpMenu_2.Value == "Sliders"
+                        break;
+                    end
+                end
+        end
+    end
+end
+
 %% Functions required for collision detection
 % Some of the below functions were retrieved from lab solutions, and others
 % were created from scratch using existing functions and lab solutions as a
