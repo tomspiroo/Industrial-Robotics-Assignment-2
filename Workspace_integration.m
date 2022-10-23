@@ -32,23 +32,9 @@ q2 = deg2rad([-45 -4 0 0 -150 0]);
 
 QMatrix = jtraj(q1,q2,50); %Calculate Trajectory
 
-%% CHECK TRAJECTORY FOR COLLISIONS
-% Get Benchtop and Wall FaceNormals
-benchFaceNormals = zeros(size(BenchtopAndWall.model.faces{1,2},1),3);
-for faceIndex = 1:size(BenchtopAndWall.model.faces{1,2},1)
-    v1 = BenchtopAndWall.model.points{1,2}(BenchtopAndWall.model.faces{1,2}(faceIndex,1)',:);
-    v2 = BenchtopAndWall.model.points{1,2}(BenchtopAndWall.model.faces{1,2}(faceIndex,2)',:);
-    v3 = BenchtopAndWall.model.points{1,2}(BenchtopAndWall.model.faces{1,2}(faceIndex,3)',:);
-    benchFaceNormals(faceIndex,:) = unit(cross(v2-v1,v3-v1));
-end
-% Get each joints coordinates
-tr = zeros(4,4,ur3.model.n+1);
-tr(:,:,1) = ur3.model.base;
-L = ur3.model.links;
-% For each pose, check for collisions
-willCollide = IsCollision(ur3.model,QMatrix,BenchtopAndWall.model.faces{1,2},BenchtopAndWall.model.points{1,2},benchFaceNormals,true);
-display(willCollide)
-
+%% Check for collisions
+collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
+display(collisionCheck)
 %% Run movement
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robot in motion"
@@ -247,6 +233,36 @@ end
 disp('3.2 UR3 moves mack to origin')
 
 %% Functions required for collision detection
+% Some of the below functions were retrieved from lab solutions, and others
+% were created from scratch using existing functions and lab solutions as a
+% reference.
+
+%% CHECK TRAJECTORY FOR COLLISIONS (JEREMY MANSFIELD 2022)
+% Get Benchtop and Wall FaceNormals
+function result = IsModelCollision(robot,object,qMatrix)
+
+    modelNormals = zeros(size(object.model.faces{1,2},1),3);
+    for faceIndex = 1:size(object.model.faces{1,2},1)
+        v1 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,1)',:);
+        v2 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,2)',:);
+        v3 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,3)',:);
+        modelNormals(faceIndex,:) = unit(cross(v2-v1,v3-v1));
+    end
+    % Get each joints coordinates
+    tr = zeros(4,4,robot.model.n+1);
+    tr(:,:,1) = robot.model.base;
+    L = robot.model.links;
+    % For each pose, check for collisions
+    willCollide = IsCollision(robot.model,qMatrix,object.model.faces{1,2},object.model.points{1,2},modelNormals,true);
+    if willCollide == 1
+        result = true;
+        return
+    else
+        result = false;
+        return
+    end
+
+end
 %% IsIntersectionPointInsideTriangle
 % Given a point which is known to be on the same plane as the triangle
 % determine if the point is 
