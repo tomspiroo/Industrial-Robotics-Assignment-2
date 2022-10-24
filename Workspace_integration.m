@@ -339,12 +339,16 @@ for i = 1:50
             ur3.model.animate(QMatrix(i,:));
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
+            Lime.model.base = ur3.model.fkine(QMatrix(i,:)) * transl(0,-0.05, 0.06);
+            Lime.model.animate(0);
             drawnow()
         else
             while gui.EditFieldMotion.Value == "Robots stopped"
                 ur3.model.plot(QMatrix(i,:));
                 GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
                 GlassFull.model.animate(0);
+                Lime.model.base = ur3.model.fkine(QMatrix(i,:)) * transl(0,-0.05, 0.06);
+                Lime.model.animate(0);
             end
         end
 end
