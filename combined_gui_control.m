@@ -117,7 +117,7 @@ while (1)
         switch gui.PopUpMenu.Value
             case 'UR3'
                 while gui.PopUpMenu.Value == "UR3"
-                    tr = ur3.model.fkine(qur3) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
+                    tr = ur3.model.fkine(qur3) * transl (gui.EditFieldX.Value * 1.5, gui.EditFieldY.Value * 1.5,gui.EditFieldZ.Value * 1.5);
                     qur3_2 = ur3.model.ikcon(tr);
                     qMatrix = jtraj(qur3,qur3_2,3);
                     checkcollision = IsModelCollision(ur3, BenchtopAndWall,qMatrix);
@@ -142,7 +142,7 @@ while (1)
                 end
             case 'Braccio'
                 while gui.PopUpMenu.Value == "Braccio"
-                    tr = braccio.model.fkine(qbraccio) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
+                    tr = braccio.model.fkine(qbraccio) * transl (gui.EditFieldX.Value * 1.5 , gui.EditFieldY.Value*1.5,gui.EditFieldZ.Value*1.5);
                     qbraccio_2 = braccio.model.ikcon(tr);
                     qMatrix = jtraj(qbraccio,qbraccio_2,3);
                     checkcollision = IsModelCollision(braccio, BenchtopAndWall,qMatrix);
