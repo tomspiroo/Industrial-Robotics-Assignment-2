@@ -415,7 +415,8 @@ while (1)
                     checkcollision = IsModelCollision(ur3, BenchtopAndWall,qMatrix);
                     checkcollision2 = IsModelCollision(ur3, Bowl,qMatrix);
                     checkcollision3 = IsModelCollision(ur3, GlassFull,qMatrix);
-                    if checkcollision == 1 || checkcollision2 == 1 || checkcollision3 == 1 
+                    checkcollision4 = IsCollision(ur3.model,qMatrix,barrierFace,barrierVertex,barrierFaceNormals,false);
+                    if checkcollision == 1 || checkcollision2 == 1 || checkcollision3 == 1 || checkcollision4 == 1
                         gui.EditFieldMotion.Value = "Failed pathing";
                         disp("Failed to identify safe path. Robot halting.")
                         while gui.EditFieldMotion.Value == "Failed pathing"
@@ -440,7 +441,8 @@ while (1)
                     checkcollision = IsModelCollision(braccio, BenchtopAndWall,qMatrix);
                     checkcollision2 = IsModelCollision(braccio, Bowl,qMatrix);
                     checkcollision3 = IsModelCollision(braccio, GlassFull,qMatrix);
-                    if checkcollision == 1 || checkcollision2 == 1 || checkcollision3 == 1 
+                    checkcollision4 = IsCollision(braccio.model,qMatrix,barrierFace,barrierVertex,barrierFaceNormals,false);
+                    if checkcollision == 1 || checkcollision2 == 1 || checkcollision3 == 1 || checkcollision4 == 1 
                         gui.EditFieldMotion.Value = "Failed pathing";
                         disp("Failed to identify safe path. Robot halting.")
                         while gui.EditFieldMotion.Value == "Failed pathing"
