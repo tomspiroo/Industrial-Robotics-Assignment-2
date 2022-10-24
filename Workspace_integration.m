@@ -27,6 +27,7 @@ for faceIndex = 1:size(barrierFace,1)
     barrierFaceNormals(faceIndex,:) = unit(cross(v2-v1,v3-v1));
 end
 %NOTE: Collision check for barrier would be IsCollision(ur3.model,qMatrix,barrierFace,barrierVertex,barrierFaceNormals,false)
+BenchtopAndWall = GeneralModel('BenchtopAndWall','BenchtopAndWallPly.ply', transl(0,0,0), workspace);
 Dispenser = GeneralModel('Dispenser','DispenserPly.ply', transl(0.45,0,0.42), workspace);
 Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
