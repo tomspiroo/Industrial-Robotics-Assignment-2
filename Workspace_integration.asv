@@ -6,13 +6,22 @@ workspace = [-1 1 -0.1 1 -1 2];
 barrier1 = surf([-1,-1;0,0],[0.8,0.8;0.8,0.8],[1,0;1,0],'CData',imread('glass.jpg'),'FaceColor','texturemap'); %Creates tabletop surface
 barrier1.FaceAlpha = 'texturemap';
 barrier1.AlphaData = 1;
+hold on
 barrier2 = surf([0,0;0.45,0.45],[0.8,0.8;0.8,0.8],[1,0.25;1,0.25],'CData',imread('glass.jpg'),'FaceColor','texturemap'); %Creates tabletop surface
 barrier2.FaceAlpha = 'texturemap';
 barrier2.AlphaData = 1;
-barrier3 = surf([0.45,;0,0],[0.8,0.8;0.8,0.8],[1,0;1,0],'CData',imread('glass.jpg'),'FaceColor','texturemap'); %Creates tabletop surface
+barrier3 = surf([0.45,0.45;1,1],[0.8,0.8;0.8,0.8],[1,0;1,0],'CData',imread('glass.jpg'),'FaceColor','texturemap'); %Creates tabletop surface
 barrier3.FaceAlpha = 'texturemap';
 barrier3.AlphaData = 1;
-BenchtopAndWall = GeneralModel('BenchtopAndWall','BenchtopAndWallPly.ply', transl(0,0,0), workspace);
+% Perspex collision check data
+barrierVertex(1,:) = [-1,0.8,0];
+barrierVertex(2,:) = [1,0.8,0];
+barrierVertex(3,:) = [-1,0.8,1];
+barrierVertex(4,:) = [1,0.8,1];
+barrierFace = [1,2,3;1,3,4];
+barrierFaceNormals = zeros(2,3);
+barrierFaceNormals(1,:) = unit(cross(barrierVertex(2,:)-cross(barrierVertex(1,:),cross(barrierVertex(3,:)-cross(barrierVertex(1,:)));
+barrierFaceNormals(2,:) = unit(cross(barrierVertex(2,:)-cross(barrierVertex(1,:),cross(barrierVertex(3,:)-cross(barrierVertex(1,:)));
 Dispenser = GeneralModel('Dispenser','DispenserPly.ply', transl(0.45,0,0.42), workspace);
 Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
