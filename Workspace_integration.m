@@ -3,6 +3,16 @@ close all
 
 %% Workspace initiliasation
 workspace = [-1 1 -0.1 1 -1 2];
+barrier1 = surf([-1,-1;0,0],[0.8,0.8;0.8,0.8],[1,0;1,0],'CData',imread('glass.jpg'),'FaceColor','texturemap'); %Creates tabletop surface
+barrier1.FaceAlpha = 'texturemap';
+barrier1.AlphaData = 1;
+hold on
+barrier2 = surf([0,0;0.45,0.45],[0.8,0.8;0.8,0.8],[1,0.25;1,0.25],'CData',imread('glass.jpg'),'FaceColor','texturemap'); %Creates tabletop surface
+barrier2.FaceAlpha = 'texturemap';
+barrier2.AlphaData = 1;
+barrier3 = surf([0.45,0.45;1,1],[0.8,0.8;0.8,0.8],[1,0;1,0],'CData',imread('glass.jpg'),'FaceColor','texturemap'); %Creates tabletop surface
+barrier3.FaceAlpha = 'texturemap';
+barrier3.AlphaData = 1;
 BenchtopAndWall = GeneralModel('BenchtopAndWall','BenchtopAndWallPly.ply', transl(0,0,0), workspace);
 Dispenser = GeneralModel('Dispenser','DispenserPly.ply', transl(0.45,0,0.42), workspace);
 Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
