@@ -422,7 +422,7 @@ while (1)
             case 'Braccio'
                 while gui.PopUpMenu.Value == "Braccio"
                     tr = braccio.model.fkine(qbraccio) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
-                    qrobot_2 = braccio.model.ikcon(tr);
+                    qbraccio_2 = braccio.model.ikcon(tr);
                     qMatrix = jtraj(qbraccio,qbraccio_2,3);
                     checkcollision = IsModelCollision(braccio, BenchtopAndWall,qMatrix);
                     checkcollision2 = IsModelCollision(braccio, Bowl,qMatrix);
@@ -439,7 +439,7 @@ while (1)
                             braccio.model.animate(qMatrix(i,:));
                         end
                     end
-                    qbraccio = qrobot_2;
+                    qbraccio = qbraccio_2;
                     if gui.PopUpMenu_2.Value == "Sliders"
                         break;
                     end
