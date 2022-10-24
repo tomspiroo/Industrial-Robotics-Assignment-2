@@ -41,7 +41,7 @@ braccio = Braccio;
 ur3 = UR3;
 gui = GUI_App;
 
-qbraccio = [0 0 0 0 0];
+qbraccio = deg2rad([0 15 0 0 0]);
 qur3 = deg2rad([0 -5 0 0 0 0]);
 
 braccio.model.base = transl(-0.25,0.4,0);
@@ -329,7 +329,7 @@ for i = 1:50
 end
 disp('Braccio: 3.1 Deposits lime into cup')
 Q1 = Q2;
-Q2 = [0 0 0 0 0];
+Q2 = deg2rad([0 15 0 0 0]);
 QMatrix2 = jtraj(Q1,Q2,50);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robots in motion"
