@@ -392,9 +392,24 @@ while (1)
         switch gui.PopUpMenu.Value
             case 'UR3'
                 while gui.PopUpMenu.Value == "UR3"
-                    tr = ur3.model.fkine(qur3) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
+                    tr = ur3.model.fkine(qur3) * transl (gui.EditFieldX.Value * 1.5, gui.EditFieldY.Value * 1.5,gui.EditFieldZ.Value * 1.5);
                     qur3_2 = ur3.model.ikcon(tr);
-                    ur3.model.animate(qur3_2);
+                    qMatrix = jtraj(qur3,qur3_2,3);
+                    checkcollision = IsModelCollision(ur3, BenchtopAndWall,qMatrix);
+                    checkcollision2 = IsModelCollision(ur3, Bowl,qMatrix);
+                    checkcollision3 = IsModelCollision(ur3, GlassFull,qMatrix);
+                    if checkcollision == 1 || checkcollision2 == 1 || checkcollision3 == 1 
+                        gui.EditFieldMotion.Value = "Failed pathing";
+                        disp("Failed to identify safe path. Robot halting.")
+                        while gui.EditFieldMotion.Value == "Failed pathing"
+                            ur3.model.plot(qur3);
+                        end
+                    else
+                        gui.EditFieldMotion.Value = "Robots in Motion";
+                        for i = 1:3
+                            ur3.model.animate(qMatrix(i,:));
+                        end
+                    end
                     qur3 = qur3_2;
                     if gui.PopUpMenu_2.Value == "Sliders"
                         break;
@@ -404,7 +419,22 @@ while (1)
                 while gui.PopUpMenu.Value == "Braccio"
                     tr = braccio.model.fkine(qbraccio) * transl (gui.EditFieldX.Value, gui.EditFieldY.Value,gui.EditFieldZ.Value);
                     qrobot_2 = braccio.model.ikcon(tr);
-                    braccio.model.animate(qrobot_2);
+                    qMatrix = jtraj(qbraccio,qbraccio_2,3);
+                    checkcollision = IsModelCollision(braccio, BenchtopAndWall,qMatrix);
+                    checkcollision2 = IsModelCollision(braccio, Bowl,qMatrix);
+                    checkcollision3 = IsModelCollision(braccio, GlassFull,qMatrix);
+                    if checkcollision == 1 || checkcollision2 == 1 || checkcollision3 == 1 
+                        gui.EditFieldMotion.Value = "Failed pathing";
+                        disp("Failed to identify safe path. Robot halting.")
+                        while gui.EditFieldMotion.Value == "Failed pathing"
+                            braccio.model.plot(qbraccio);
+                        end
+                    else
+                        gui.EditFieldMotion.Value = "Robots in Motion";
+                        for i = 1:3
+                            braccio.model.animate(qMatrix(i,:));
+                        end
+                    end
                     qbraccio = qrobot_2;
                     if gui.PopUpMenu_2.Value == "Sliders"
                         break;
