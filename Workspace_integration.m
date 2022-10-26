@@ -40,6 +40,7 @@ hold on
 braccio = Braccio;
 ur3 = UR3;
 gui = GUI_App;
+gui2 = Drink_selection_gui;
 
 qbraccio = deg2rad([0 15 0 0 0]);
 qur3 = deg2rad([0 -5 0 0 0 0]);
@@ -63,6 +64,10 @@ if collisionCheck == 1
     display("Potential collision identified. Testing known safe waypoints for alternative.")
 end
 %% Run movement
+while gui2.BSel.Value ~= "Bitters" && gui2.BSel.Value ~= "No bitters" && gui2.SWSel.Value ~= "Soda water" && gui2.SWSel.Value ~= "No soda water"
+    braccio.model.plot(qbraccio);
+    ur3.model.plot(qur3);
+end
 for i = 1:25
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
