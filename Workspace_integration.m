@@ -181,12 +181,102 @@ disp('UR3: 2.3 Moved back down')
 
 %% Continue
 % Move to location under second liquid dispenser
-Tr3 = Tr * transl(0.15,0,0);
-q2 = ur3.model.ikcon(Tr3);
-qWaypoint = deg2rad([55 -110 85 25 47 0]);
-QMatrixPart1 = jtraj(q1, qWaypoint, 13);
-QMatrixPart2 = jtraj(qWaypoint, q2, 12);
-QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
+if gui2.BSel.Value == "Bitters"
+    Tr3 = Tr * transl(0.15,0,0);
+    q2 = ur3.model.ikcon(Tr3);
+    qWaypoint = deg2rad([55 -110 85 25 47 0]);
+    QMatrixPart1 = jtraj(q1, qWaypoint, 13);
+    QMatrixPart2 = jtraj(qWaypoint, q2, 12);
+    QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
+    for i = 1:25
+        if gui.EditFieldMotion.Value == "Robots in motion"
+            ur3.model.animate(QMatrix(i,:));
+            GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
+            GlassFull.model.animate(0);
+            drawnow()
+        else
+            while gui.EditFieldMotion.Value == "Robots stopped"
+                ur3.model.plot(QMatrix(i,:));
+                GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
+                GlassFull.model.animate(0);
+            end
+        end
+    end
+    disp('UR3: 2.4 Cup is under second liquid')
+    q1 = q2;
+
+    % Collect second liquid 
+    Tr4 = Tr3 * transl(0,0.05,0);
+    q2 = ur3.model.ikcon(Tr4);
+    QMatrix = jtraj(q1, q2, 20);
+    Q1 = qbraccio;
+    Q2 = deg2rad([90 0 0 0 0]);
+    QMatrix2 = jtraj(Q1,Q2,20);
+    for i = 1:20
+        if gui.EditFieldMotion.Value == "Robots in motion"
+            ur3.model.animate(QMatrix(i,:));
+            braccio.model.animate(QMatrix2(i,:));
+            GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
+            GlassFull.model.animate(0);
+            drawnow()
+        else
+            while gui.EditFieldMotion.Value == "Robots stopped"
+                ur3.model.plot(QMatrix(i,:));
+                braccio.model.plot(QMatrix2(i,:));
+                GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
+                GlassFull.model.animate(0);
+            end
+        end
+    end
+    disp('UR3: 2.5 Collected second liquid')
+    disp('Braccio: 1.1 Rotates to face the lime')
+    QMatrix = jtraj(q2, q1, 20);
+    Q1 = Q2;
+    tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
+    Q2 = braccio.model.ikcon(tr);
+    QMatrix2 = jtraj(Q1,Q2,40);
+    for i = 1:20
+        if gui.EditFieldMotion.Value == "Robots in motion"
+            ur3.model.animate(QMatrix(i,:));
+            braccio.model.animate(QMatrix2(i,:));
+            GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
+            GlassFull.model.animate(0);
+            drawnow()
+        else
+            while gui.EditFieldMotion.Value == "Robots stopped"
+                ur3.model.plot(QMatrix(i,:));
+                braccio.model.plot(QMatrix2(i,:));
+                GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
+                GlassFull.model.animate(0);
+            end
+        end
+    end
+    for i = 21:40
+        if gui.EditFieldMotion.Value == "Robots in motion"
+            braccio.model.animate(QMatrix2(i,:));
+            drawnow()
+        else
+            while gui.EditFieldMotion.Value == "Robots stopped"
+                braccio.model.plot(QMatrix2(i,:));
+            end
+        end
+    end
+    disp('UR3: 2.6 Moved back down')
+    disp('Braccio: 1.2 Moves to collect the lime')
+end
+% %% Check for valid waypoint
+% ur3.model.teach
+
+%% Collecting liquid from the thrid dispenser
+
+if gui2.SWSel.Value == "Soda water" && gui2.BSel.Value == "No bitters"
+    Tr3 = Tr * transl(-0.15,0,0);
+    q2 = ur3.model.ikcon(Tr3);
+elseif gui2.SWSel.Value == "Soda water" && gui2.BSel.Value == "Bitters"
+    Tr3 = Tr * transl(-0.3,0,0);
+    q2 = ur3.model.ikcon(Tr3);
+end
+QMatrix = jtraj(q1, q2, 25);
 for i = 1:25
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
@@ -201,69 +291,81 @@ for i = 1:25
         end
     end
 end
-disp('UR3: 2.4 Cup is under second liquid')
+disp('UR3: 2.4 Cup is under third liquid')
 q1 = q2;
 
-% Collect second liquid 
+% Collect third liquid 
 Tr4 = Tr3 * transl(0,0.05,0);
 q2 = ur3.model.ikcon(Tr4);
 QMatrix = jtraj(q1, q2, 20);
-Q1 = qbraccio;
-Q2 = deg2rad([90 0 0 0 0]);
-QMatrix2 = jtraj(Q1,Q2,20);
+if gui2.BSel.Value == "No bitters"
+    Q1 = qbraccio;
+    Q2 = deg2rad([90 0 0 0 0]);
+    QMatrix2 = jtraj(Q1,Q2,20);
+end
 for i = 1:20
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
-        braccio.model.animate(QMatrix2(i,:));
+        if gui2.BSel.Value == "No bitters"
+            braccio.model.animate(QMatrix2(i,:));
+        end
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
         GlassFull.model.animate(0);
         drawnow()
     else
         while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
-            braccio.model.plot(QMatrix2(i,:));
+            if gui2.BSel.Value == "No bitters"
+                braccio.model.plot(QMatrix2(i,:));
+            end
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
         end
     end
 end
-disp('UR3: 2.5 Collected second liquid')
+disp('UR3: 2.5 Collected third liquid')
 disp('Braccio: 1.1 Rotates to face the lime')
 QMatrix = jtraj(q2, q1, 20);
-Q1 = Q2;
-tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
-Q2 = braccio.model.ikcon(tr);
-QMatrix2 = jtraj(Q1,Q2,40);
+if gui2.BSel.Value == "No bitters"
+    Q1 = Q2;
+    tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
+    Q2 = braccio.model.ikcon(tr);
+    QMatrix2 = jtraj(Q1,Q2,40);
+end
 for i = 1:20
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
-        braccio.model.animate(QMatrix2(i,:));
+        if gui2.BSel.Value == "No bitters"
+            braccio.model.animate(QMatrix2(i,:));
+        end
         GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
         GlassFull.model.animate(0);
         drawnow()
     else
         while gui.EditFieldMotion.Value == "Robots stopped"
             ur3.model.plot(QMatrix(i,:));
-            braccio.model.plot(QMatrix2(i,:));
+            if gui2.BSel.Value == "No bitters"
+                braccio.model.plot(QMatrix2(i,:));
+            end
             GlassFull.model.base = ur3.model.fkine(QMatrix(i,:))* transl(0,-0.1,0.06)* trotx(deg2rad(-90));
             GlassFull.model.animate(0);
         end
     end
 end
-for i = 21:40
-    if gui.EditFieldMotion.Value == "Robots in motion"
-        braccio.model.animate(QMatrix2(i,:));
-        drawnow()
-    else
-        while gui.EditFieldMotion.Value == "Robots stopped"
-            braccio.model.plot(QMatrix2(i,:));
+if gui2.BSel.Value == "No bitters"
+    for i = 21:40
+        if gui.EditFieldMotion.Value == "Robots in motion"
+            braccio.model.animate(QMatrix2(i,:));
+            drawnow()
+        else
+            while gui.EditFieldMotion.Value == "Robots stopped"
+                braccio.model.plot(QMatrix2(i,:));
+            end
         end
     end
 end
 disp('UR3: 2.6 Moved back down')
 disp('Braccio: 1.2 Moves to collect the lime')
-% %% Check for valid waypoint
-% ur3.model.teach
 
 %% Continue
 % Return to origin
