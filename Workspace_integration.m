@@ -33,6 +33,7 @@ Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
 GlassFull = GeneralModel('GlassFull','FullglassPly.ply', transl(0,0.25,-0.5), workspace);
 Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.25,0.7,0.04), workspace);
+Interrupt = GeneralModel('Interrupt','interrupt.ply',transl(1,1,1),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
 drawnow
 
 hold on
@@ -58,15 +59,31 @@ q2 = deg2rad([-45 -4 0 0 -150 0]);
 QMatrix = jtraj(q1,q2,25); %Calculate Trajectory
 
 %% Check for collisions
-collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
-if collisionCheck == 1
-    gui.EditFieldMotion.Value = "Obstacle found";
-    display("Potential collision identified. Testing known safe waypoints for alternative.")
-end
+% collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
+% if collisionCheck == 1
+%     gui.EditFieldMotion.Value = "Obstacle found";
+%     display("Potential collision identified. Testing known safe waypoints for alternative.")
+% end
 %% Run movement
 while gui2.BSel.Value ~= "Bitters" && gui2.BSel.Value ~= "No bitters" && gui2.SWSel.Value ~= "Soda water" && gui2.SWSel.Value ~= "No soda water"
     braccio.model.plot(qbraccio);
     ur3.model.plot(qur3);
+end
+% After start, enable light curtain
+linex = [];
+liney = [];
+linez = [];
+lineCoordIndex = 1;
+for x = 0.05:0.05:0.40
+    plot3([x x],[0.8 0.8],[0 0.25],'r');
+    linex(lineCoordIndex) = x;
+    liney(lineCoordIndex) = 0.8;
+    linez(lineCoordIndex) = 0;
+    lineCoordIndex = lineCoordIndex + 1;
+    linex(lineCoordIndex) = x;
+    liney(lineCoordIndex) = 0.8;
+    linez(lineCoordIndex) = 0.25;
+    lineCoordIndex = lineCoordIndex + 1;
 end
 for i = 1:25
         if gui.EditFieldMotion.Value == "Robots in motion"
@@ -80,6 +97,8 @@ for i = 1:25
 end
 disp('UR3: 1.1 Moved to location of cup');
 QMatrix = jtraj(q2,q1,25);
+QMatrix2 = qbraccio;
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:25
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
@@ -107,8 +126,8 @@ if collisionCheck == 1
     qWaypoint = deg2rad([0 -133 110 25 33 0]);
     QMatrixCheck1 = jtraj(q1, qWaypoint, 25);
     QMatrixCheck2 = jtraj(qWaypoint, q2, 25);
-    collisionCheck1 = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
-    collisionCheck2 = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
+    collisionCheck1 = IsModelCollision(ur3,BenchtopAndWall,QMatrixCheck1);
+    collisionCheck2 = IsModelCollision(ur3,BenchtopAndWall,QMatrixCheck2);
     if collisionCheck1 == 1 || collisionCheck2 == 1
         gui.EditFieldMotion.Value = "Failed pathing";
         disp("Failed to identify safe path. Robot halting.")
@@ -276,7 +295,10 @@ elseif gui2.SWSel.Value == "Soda water" && gui2.BSel.Value == "Bitters"
     Tr3 = Tr * transl(-0.3,0,0);
     q2 = ur3.model.ikcon(Tr3);
 end
-QMatrix = jtraj(q1, q2, 25);
+qWaypoint = deg2rad([55 -110 85 25 47 0]);
+QMatrixPart1 = jtraj(q1, qWaypoint, 13);
+QMatrixPart2 = jtraj(qWaypoint, q2, 12);
+QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
 for i = 1:25
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
@@ -601,6 +623,29 @@ function result = IsModelCollision(robot,object,qMatrix)
     end
 
 end
+%% %% CHECK LINE FOR COLLISION WITH OBJECT (JEREMY MANSFIELD 2022)
+% Get Benchtop and Wall FaceNormals
+function result = IsModelIntersectLine(xs,ys,zs,object)
+
+    modelNormals = zeros(size(object.model.faces{1,2},1),3);
+    for faceIndex = 1:size(object.model.faces{1,2},1)
+        v1 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,1)',:);
+        v2 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,2)',:);
+        v3 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,3)',:);
+        modelNormals(faceIndex,:) = unit(cross(v2-v1,v3-v1));
+    end
+    % For line, check for collisions
+    willCollide = IsLineIntersect(xs,ys,zs,object.model.faces{1,2},object.model.points{1,2},modelNormals,true);
+    if willCollide == 1
+        result = true;
+        return
+    else
+        result = false;
+        return
+    end
+
+end
+
 %% IsIntersectionPointInsideTriangle
 % Given a point which is known to be on the same plane as the triangle
 % determine if the point is 
@@ -668,6 +713,33 @@ for qIndex = 1:size(qMatrix,1)
     end
 end
 end
+%% IsLineIntersect
+% Modified from IsCollision. Checks if lines intersect a model.
+function result = IsLineIntersect(xs,ys,zs,faces,vertex,faceNormals,returnOnceFound)
+    if nargin < 7
+        returnOnceFound = true;
+    end
+    result = false;
+    
+    % Get the transform of every joint (i.e. start and end of every link)
+    tr = transl(xs(:),ys(:),zs(:));
+    
+% Go through each link and also each triangle face
+    for i = 1 : size(tr,3)-1    
+        for faceIndex = 1:size(faces,1)
+            vertOnPlane = vertex(faces(faceIndex,1)',:);
+            [intersectP,check] = LinePlaneIntersection(faceNormals(faceIndex,:),vertOnPlane,tr(1:3,4,i)',tr(1:3,4,i+1)'); 
+            if check == 1 && IsIntersectionPointInsideTriangle(intersectP,vertex(faces(faceIndex,:)',:))
+                plot3(intersectP(1),intersectP(2),intersectP(3),'g*');
+                display('Intersection');
+                result = true;
+                if returnOnceFound
+                    return
+                end
+            end
+        end    
+    end
+end
 
 %% GetLinkPoses
 % q - robot joint angles
@@ -717,4 +789,30 @@ for i = 1: size(waypointRadians,1)-1
     qMatrix = [qMatrix ; FineInterpolation(waypointRadians(i,:),waypointRadians(i+1,:),maxStepRadians)]; %#ok<AGROW>
 end
 end
-
+%% CollisionCheck
+% Checks for collisions with supplied GeneralModel parts with specified
+% robot path, stalls until double press resume action with GUI.
+function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benchtopandwallobj, interruptobj,xs,ys,zs,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals)
+    checkCollision1 = IsModelCollision(robot1,benchtopandwallobj,qMatrix1);
+    checkCollision2 = IsModelCollision(robot2,benchtopandwallobj,qMatrix2);
+    checkCollision3 = IsModelCollision(robot1,interruptobj,qMatrix1);
+    checkCollision4 = IsModelCollision(robot2,interruptobj,qMatrix2);
+    checkCollision5 = IsCollision(robot1.model,qMatrix1,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals,false);
+    checkCollision6 = IsCollision(robot2.model,qMatrix2,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals,false);
+    checkCollision7 = IsModelIntersectLine(xs,ys,zs,object);
+    if checkCollision1 || checkCollision2 || checkCollision3 || checkCollision4 || checkCollision5 || checkCollision6 || checkCollision7
+        obstruction = true;
+        gui.EditFieldMotion.Value = "Failed pathing";
+        disp("Failed to identify safe path. Robot halting.")
+        while gui.EditFieldMotion.Value == "Failed pathing"
+            %Do nothing
+        end
+        obstruction = false;
+    else
+        gui.EditFieldMotion.Value = "Robots in Motion";
+%         for i = 1:3
+%             braccio.model.animate(qMatrix(i,:));
+%         end
+        return
+    end
+end
