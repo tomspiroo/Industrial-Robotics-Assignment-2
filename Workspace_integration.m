@@ -57,7 +57,7 @@ q1 = deg2rad([0 -5 0 0 0 0]);
 q2 = deg2rad([-45 -4 0 0 -150 0]);
 
 QMatrix = jtraj(q1,q2,25); %Calculate Trajectory
-
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 %% Check for collisions
 % collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
 % if collisionCheck == 1
@@ -119,6 +119,7 @@ disp('UR3: 1.2 Cup collected, returned to origin')
 Tr = ur3.model.base *  transl(-0.05,-0.3,0.4) * trotx(deg2rad(90));
 q2 = ur3.model.ikcon(Tr);
 QMatrix = jtraj(q1, q2, 50);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
 if collisionCheck == 1
     gui.EditFieldMotion.Value = "Obstacle found";
@@ -143,6 +144,7 @@ qWaypoint = deg2rad([0 -133 110 25 33 0]);
 QMatrixCheck1 = jtraj(q1, qWaypoint, 25);
 QMatrixCheck2 = jtraj(qWaypoint, q2, 25);
 QMatrix = cat(1, QMatrixCheck1, QMatrixCheck2);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:50
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
@@ -164,6 +166,7 @@ q1 = q2;
 Tr2 = Tr * transl(0,0.05,0);
 q2 = ur3.model.ikcon(Tr2);
 QMatrix = jtraj(q1, q2, 20);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:20
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
@@ -182,6 +185,7 @@ disp('UR3: 2.2 Collected first liquid')
 GlassEmpty.model.base = [1 0 0 0; 0 1 0 0.25; 0 0 1 -0.5; 0 0 0 1];
 GlassEmpty.model.animate(0);
 QMatrix = jtraj(q2, q1, 20);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:20
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
@@ -207,6 +211,7 @@ if gui2.BSel.Value == "Bitters"
     QMatrixPart1 = jtraj(q1, qWaypoint, 13);
     QMatrixPart2 = jtraj(qWaypoint, q2, 12);
     QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
+    obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
     for i = 1:25
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
@@ -231,6 +236,7 @@ if gui2.BSel.Value == "Bitters"
     Q1 = qbraccio;
     Q2 = deg2rad([90 0 0 0 0]);
     QMatrix2 = jtraj(Q1,Q2,20);
+    obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
     for i = 1:20
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
@@ -254,6 +260,7 @@ if gui2.BSel.Value == "Bitters"
     tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
     Q2 = braccio.model.ikcon(tr);
     QMatrix2 = jtraj(Q1,Q2,40);
+    obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
     for i = 1:20
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
@@ -299,6 +306,7 @@ qWaypoint = deg2rad([55 -110 85 25 47 0]);
 QMatrixPart1 = jtraj(q1, qWaypoint, 13);
 QMatrixPart2 = jtraj(qWaypoint, q2, 12);
 QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:25
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
@@ -320,6 +328,7 @@ q1 = q2;
 Tr4 = Tr3 * transl(0,0.05,0);
 q2 = ur3.model.ikcon(Tr4);
 QMatrix = jtraj(q1, q2, 20);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 if gui2.BSel.Value == "No bitters"
     Q1 = qbraccio;
     Q2 = deg2rad([90 0 0 0 0]);
@@ -348,6 +357,7 @@ end
 disp('UR3: 2.5 Collected third liquid')
 disp('Braccio: 1.1 Rotates to face the lime')
 QMatrix = jtraj(q2, q1, 20);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 if gui2.BSel.Value == "No bitters"
     Q1 = Q2;
     tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
@@ -398,6 +408,7 @@ QMatrixPart2 = jtraj(qWaypoint, q2, 25);
 QMatrix = cat(1, QMatrixPart1, QMatrixPart2);
 Q1 = deg2rad([45 0 0 0 0]);
 QMatrix2 = jtraj(Q2,Q1,50);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:50
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
@@ -425,6 +436,7 @@ disp('Braccio: 2. Lime collected and Braccio rotated to offload')
 q1 = q2;
 q2 = deg2rad([-45 -5 0 0 0 0]);
 QMatrix = jtraj(q1,q2,50);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
@@ -442,6 +454,7 @@ end
 disp('UR3: 3. Moved to collect payload from Braccio');
 Q2 = deg2rad([32.4 22.5 30.6 81 0]);
 QMatrix2 = jtraj(Q1,Q2,50);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robots in motion"
             braccio.model.animate(QMatrix2(i,:));
@@ -460,6 +473,7 @@ disp('Braccio: 3.1 Deposits lime into cup')
 Q1 = Q2;
 Q2 = deg2rad([0 15 0 0 0]);
 QMatrix2 = jtraj(Q1,Q2,50);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robots in motion"
             braccio.model.animate(QMatrix2(i,:));
@@ -477,6 +491,7 @@ q1 = q2;
 q2 = deg2rad([-45 -4 0 0 -150 0]);
 
 QMatrix = jtraj(q1,q2,50);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
@@ -498,6 +513,7 @@ end
 disp('UR3: 4.1 Moved to payload area and dropped the payload');
 q1 = deg2rad([0 0 0 0 0 0]);
 QMatrix = jtraj(q2,q1,50);
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:50
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
