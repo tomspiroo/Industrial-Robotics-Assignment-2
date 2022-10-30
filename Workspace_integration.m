@@ -33,7 +33,7 @@ Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
 GlassFull = GeneralModel('GlassFull','FullglassPly.ply', transl(0,0.25,-0.5), workspace);
 Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.25,0.7,0.04), workspace);
-Interrupt = GeneralModel('Interrupt','Interrupt.ply',transl(1,1,1),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
+Interrupt = GeneralModel('Interrupt','Interrupt.ply',transl(0.25,0.8,0.2),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
 drawnow
 
 hold on
@@ -57,7 +57,7 @@ q1 = deg2rad([0 -5 0 0 0 0]);
 q2 = deg2rad([-45 -4 0 0 -150 0]);
 
 QMatrix = jtraj(q1,q2,25); %Calculate Trajectory
-obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
+
 %% Check for collisions
 % collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
 % if collisionCheck == 1
@@ -95,7 +95,7 @@ for i = 1:25
             end
         end
 end
-disp('UR3: 1.1 Moved to location of cup');
+disp('UR3: Moved to location of cup');
 QMatrix = jtraj(q2,q1,25);
 QMatrix2 = qbraccio;
 obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
@@ -113,7 +113,7 @@ for i = 1:25
             end
         end
 end
-disp('UR3: 1.2 Cup collected, returned to origin')
+disp('UR3: Cup collected, returned to origin')
 %% UR3 trajectory for collecting liquids
 % Move to location under first liquid dispenser 
 Tr = ur3.model.base *  transl(-0.05,-0.3,0.4) * trotx(deg2rad(90));
@@ -159,7 +159,7 @@ for i = 1:50
         end
     end
 end
-disp('UR3: 2.1 Cup is under first liquid')
+disp('UR3: Cup is under first liquid')
 q1 = q2;
 %% Continue
 % Collect first liquid
@@ -181,7 +181,7 @@ for i = 1:20
         end
     end
 end
-disp('UR3: 2.2 Collected first liquid')
+disp('UR3: Collected first liquid')
 GlassEmpty.model.base = [1 0 0 0; 0 1 0 0.25; 0 0 1 -0.5; 0 0 0 1];
 GlassEmpty.model.animate(0);
 QMatrix = jtraj(q2, q1, 20);
@@ -200,7 +200,7 @@ for i = 1:20
         end
     end
 end
-disp('UR3: 2.3 Moved back down')
+disp('UR3: Moved back down')
 
 %% Continue
 % Move to location under second liquid dispenser
@@ -226,7 +226,7 @@ if gui2.BSel.Value == "Bitters"
             end
         end
     end
-    disp('UR3: 2.4 Cup is under second liquid')
+    disp('UR3: Cup is under second liquid')
     q1 = q2;
 
     % Collect second liquid 
@@ -253,8 +253,8 @@ if gui2.BSel.Value == "Bitters"
             end
         end
     end
-    disp('UR3: 2.5 Collected second liquid')
-    disp('Braccio: 1.1 Rotates to face the lime')
+    disp('UR3: Collected second liquid')
+    disp('Braccio: Rotates to face the lime')
     QMatrix = jtraj(q2, q1, 20);
     Q1 = Q2;
     tr = Lime.model.base *  transl(0,0.05,0.06) * troty(deg2rad(180));
@@ -287,8 +287,8 @@ if gui2.BSel.Value == "Bitters"
             end
         end
     end
-    disp('UR3: 2.6 Moved back down')
-    disp('Braccio: 1.2 Moves to collect the lime')
+    disp('UR3: Moved back down')
+    disp('Braccio: Moves to collect the lime')
 end
 % %% Check for valid waypoint
 % ur3.model.teach
@@ -321,10 +321,10 @@ for i = 1:25
         end
     end
 end
-disp('UR3: 2.4 Cup is under third liquid')
+disp('UR3: Cup is under third liquid')
 q1 = q2;
 
-% Collect third liquid 
+%% Collect third liquid 
 Tr4 = Tr3 * transl(0,0.05,0);
 q2 = ur3.model.ikcon(Tr4);
 QMatrix = jtraj(q1, q2, 20);
@@ -354,8 +354,11 @@ for i = 1:20
         end
     end
 end
-disp('UR3: 2.5 Collected third liquid')
-disp('Braccio: 1.1 Rotates to face the lime')
+disp('UR3: Collected third liquid')
+if gui2.BSel.Value == "No bitters"
+    disp('Braccio: Rotates to face the lime')   
+end
+
 QMatrix = jtraj(q2, q1, 20);
 obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 if gui2.BSel.Value == "No bitters"
@@ -396,8 +399,11 @@ if gui2.BSel.Value == "No bitters"
         end
     end
 end
-disp('UR3: 2.6 Moved back down')
-disp('Braccio: 1.2 Moves to collect the lime')
+disp('UR3: Moved back down')
+if gui2.BSel.Value == "No bitters"
+    disp('Braccio: Moves to collect the lime')
+end
+
 
 %% Continue
 % Return to origin
@@ -429,8 +435,8 @@ for i = 1:50
         end
     end
 end
-disp('UR3: 2.7 Returned to origin')
-disp('Braccio: 2. Lime collected and Braccio rotated to offload')
+disp('UR3: Returned to origin')
+disp('Braccio: Lime collected and Braccio rotated to offload')
 
 %% UR3 collecting payload from Braccio 
 q1 = q2;
@@ -451,7 +457,7 @@ for i = 1:50
             end
         end
 end
-disp('UR3: 3. Moved to collect payload from Braccio');
+disp('UR3: Moved to collect payload from Braccio');
 Q2 = deg2rad([32.4 22.5 30.6 81 0]);
 QMatrix2 = jtraj(Q1,Q2,50);
 obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
@@ -469,7 +475,7 @@ for i = 1:50
             end
         end
 end
-disp('Braccio: 3.1 Deposits lime into cup')
+disp('Braccio: Deposits lime into cup')
 Q1 = Q2;
 Q2 = deg2rad([0 15 0 0 0]);
 QMatrix2 = jtraj(Q1,Q2,50);
@@ -484,7 +490,7 @@ for i = 1:50
             end
         end
 end
-disp('Braccio: 3.2 Returns to origin')
+disp('Braccio: Returns to origin')
 
 %% UR3 trajectory for placing filled cup in payload area
 q1 = q2;
@@ -510,7 +516,7 @@ for i = 1:50
             end
         end
 end
-disp('UR3: 4.1 Moved to payload area and dropped the payload');
+disp('UR3: Moved to payload area and dropped the payload');
 q1 = deg2rad([0 0 0 0 0 0]);
 QMatrix = jtraj(q2,q1,50);
 obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
@@ -524,7 +530,7 @@ for i = 1:50
             end
         end
 end
-disp('UR3: 4.2 UR3 moves mack to origin')
+disp('UR3: Moves mack to origin')
 
 %% GUI Control of the robot arms
 while (1)
