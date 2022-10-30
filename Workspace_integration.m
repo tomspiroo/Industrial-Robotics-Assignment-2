@@ -738,7 +738,11 @@ function result = IsLineIntersect(xs,ys,zs,faces,vertex,faceNormals,returnOnceFo
     result = false;
     
     % Get the transform of every joint (i.e. start and end of every link)
-    tr = transl(xs(:),ys(:),zs(:));
+    tr = [];
+    for i = 1 : size(xs)-1
+        tr(i) = transl(xs(i),ys(i),zs(i));
+    end
+    %tr = transl(xs(:),ys(:),zs(:));
     
 % Go through each link and also each triangle face
     for i = 1 : size(tr,3)-1    
