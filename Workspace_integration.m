@@ -826,7 +826,7 @@ function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benc
     checkCollision5 = IsCollision(robot1.model,qMatrix1,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals,false);
     checkCollision6 = IsCollision(robot2.model,qMatrix2,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals,false);
     checkCollision7 = IsModelIntersectLine(xs,ys,zs,interruptobj);
-    if checkCollision1 || checkCollision2 || checkCollision3 || checkCollision4 || checkCollision5 || checkCollision6 || checkCollision7
+    if checkCollision1 == 1 || checkCollision2 == 1 || checkCollision3 == 1 || checkCollision4 == 1 || checkCollision5 == 1 || checkCollision6 == 1 || checkCollision7 == 1
         obstruction = true;
         gui.EditFieldMotion.Value = "Failed pathing";
         disp("Failed to identify safe path. Robot halting.")
