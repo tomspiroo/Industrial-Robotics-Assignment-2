@@ -799,7 +799,7 @@ function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benc
     checkCollision4 = IsModelCollision(robot2,interruptobj,qMatrix2);
     checkCollision5 = IsCollision(robot1.model,qMatrix1,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals,false);
     checkCollision6 = IsCollision(robot2.model,qMatrix2,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals,false);
-    checkCollision7 = IsModelIntersectLine(xs,ys,zs,object);
+    checkCollision7 = IsModelIntersectLine(xs,ys,zs,interruptobj);
     if checkCollision1 || checkCollision2 || checkCollision3 || checkCollision4 || checkCollision5 || checkCollision6 || checkCollision7
         obstruction = true;
         gui.EditFieldMotion.Value = "Failed pathing";
