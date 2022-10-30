@@ -33,7 +33,7 @@ Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
 GlassFull = GeneralModel('GlassFull','FullglassPly.ply', transl(0,0.25,-0.5), workspace);
 Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.25,0.7,0.04), workspace);
-Interrupt = GeneralModel('Interrupt','Interrupt.ply',transl(0.25,0.8,0.2),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
+Interrupt = GeneralModel('Interrupt','Interrupt.ply',transl(0.25,0.8,0.1),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
 drawnow
 
 hold on
@@ -819,6 +819,7 @@ end
 % Checks for collisions with supplied GeneralModel parts with specified
 % robot path, stalls until double press resume action with GUI.
 function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benchtopandwallobj, interruptobj,xs,ys,zs,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals)
+    disp("Checking for collisions.");
     checkCollision1 = IsModelCollision(robot1,benchtopandwallobj,qMatrix1);
     checkCollision2 = IsModelCollision(robot2,benchtopandwallobj,qMatrix2);
     checkCollision3 = IsModelCollision(robot1,interruptobj,qMatrix1);
@@ -831,7 +832,8 @@ function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benc
         gui.EditFieldMotion.Value = "Failed pathing";
         disp("Failed to identify safe path. Robot halting.")
         while gui.EditFieldMotion.Value == "Failed pathing"
-            %Do nothing
+            robot2.model.plot(qMatrix2);
+            robot1.model.plot(qMatrix1);
         end
     else
         gui.EditFieldMotion.Value = "Robots in Motion";
