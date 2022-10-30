@@ -33,7 +33,7 @@ Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
 GlassFull = GeneralModel('GlassFull','FullglassPly.ply', transl(0,0.25,-0.5), workspace);
 Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.25,0.7,0.04), workspace);
-Interrupt = GeneralModel('Interrupt','interrupt.ply',transl(1,1,1),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
+Interrupt = GeneralModel('Interrupt','Interrupt.ply',transl(1,1,1),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
 drawnow
 
 hold on
@@ -807,12 +807,12 @@ function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benc
         while gui.EditFieldMotion.Value == "Failed pathing"
             %Do nothing
         end
-        obstruction = false;
     else
         gui.EditFieldMotion.Value = "Robots in Motion";
 %         for i = 1:3
 %             braccio.model.animate(qMatrix(i,:));
 %         end
-        return
+        obstruction = false;
     end
+    return
 end

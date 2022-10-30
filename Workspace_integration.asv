@@ -33,7 +33,7 @@ Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
 GlassFull = GeneralModel('GlassFull','FullglassPly.ply', transl(0,0.25,-0.5), workspace);
 Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.25,0.7,0.04), workspace);
-Interrupt = GeneralModel('Interrupt','interrupt.ply',transl(1,1,1),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
+Interrupt = GeneralModel('Interrupt','Interrupt.ply',transl(1,1,1),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
 drawnow
 
 hold on
@@ -792,7 +792,7 @@ end
 %% CollisionCheck
 % Checks for collisions with supplied GeneralModel parts with specified
 % robot path, stalls until double press resume action with GUI.
-function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benchtopandwallobj, interruptobj,xs,yz,zs,curtianBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals)
+function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benchtopandwallobj, interruptobj,xs,ys,zs,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals)
     checkCollision1 = IsModelCollision(robot1,benchtopandwallobj,qMatrix1);
     checkCollision2 = IsModelCollision(robot2,benchtopandwallobj,qMatrix2);
     checkCollision3 = IsModelCollision(robot1,interruptobj,qMatrix1);
@@ -800,16 +800,19 @@ function obstruction = obstructionCheck(robot1, qMatrix1, robot2, qMatrix2, benc
     checkCollision5 = IsCollision(robot1.model,qMatrix1,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals,false);
     checkCollision6 = IsCollision(robot2.model,qMatrix2,curtainBarrierFace,curtainBarrierVertex,curtainBarrierFaceNormals,false);
     checkCollision7 = IsModelIntersectLine(xs,ys,zs,object);
-    if checkCollision || checkcollision2 || checkcollision3 || checkcollision4 || checkCollision5 || checkCollision6 || checkCollision7
+    if checkCollision1 || checkCollision2 || checkCollision3 || checkCollision4 || checkCollision5 || checkCollision6 || checkCollision7
+        obstruction = true;
         gui.EditFieldMotion.Value = "Failed pathing";
         disp("Failed to identify safe path. Robot halting.")
         while gui.EditFieldMotion.Value == "Failed pathing"
-            braccio.model.plot(qbraccio);
+            %Do nothing
         end
     else
         gui.EditFieldMotion.Value = "Robots in Motion";
-        for i = 1:3
-            braccio.model.animate(qMatrix(i,:));
-        end
+%         for i = 1:3
+%             braccio.model.animate(qMatrix(i,:));
+%         end
+        obstruction = false;
     end
+    return
 end
