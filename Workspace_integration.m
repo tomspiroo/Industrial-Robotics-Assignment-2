@@ -57,6 +57,7 @@ q1 = deg2rad([0 -5 0 0 0 0]);
 q2 = deg2rad([-45 -4 0 0 -150 0]);
 
 QMatrix = jtraj(q1,q2,25); %Calculate Trajectory
+QMatrix2 = qbraccio;
 
 %% Check for collisions
 % collisionCheck = IsModelCollision(ur3,BenchtopAndWall,QMatrix);
@@ -85,6 +86,7 @@ for x = 0.05:0.05:0.40
     linez(lineCoordIndex) = 0.25;
     lineCoordIndex = lineCoordIndex + 1;
 end
+obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:25
         if gui.EditFieldMotion.Value == "Robots in motion"
             ur3.model.animate(QMatrix(i,:));
@@ -631,12 +633,21 @@ end
 %% CHECK TRAJECTORY FOR COLLISIONS (JEREMY MANSFIELD 2022)
 % Get Benchtop and Wall FaceNormals
 function result = IsModelCollision(robot,object,qMatrix)
-
+    NumberOfPoints = size(object.model.points{1,2},1);
+    Points = [];
+    for i = 1:1:NumberOfPoints
+        for j = 1:1:3
+            Points(i,j) = object.model.points{1,2}(i,j) + object.model.base(j,4);
+        end
+    end
     modelNormals = zeros(size(object.model.faces{1,2},1),3);
     for faceIndex = 1:size(object.model.faces{1,2},1)
-        v1 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,1)',:);
-        v2 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,2)',:);
-        v3 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,3)',:);
+%         v1 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,1)',:);
+%         v2 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,2)',:);
+%         v3 = object.model.points{1,2}(object.model.faces{1,2}(faceIndex,3)',:);
+        v1 = Points(object.model.faces{1,2}(faceIndex,1)',:);
+        v2 = Points(object.model.faces{1,2}(faceIndex,2)',:);
+        v3 = Points(object.model.faces{1,2}(faceIndex,3)',:);
         modelNormals(faceIndex,:) = unit(cross(v2-v1,v3-v1));
     end
     % Get each joints coordinates
@@ -644,7 +655,8 @@ function result = IsModelCollision(robot,object,qMatrix)
     tr(:,:,1) = robot.model.base;
     L = robot.model.links;
     % For each pose, check for collisions
-    willCollide = IsCollision(robot.model,qMatrix,object.model.faces{1,2},object.model.points{1,2},modelNormals,true);
+%     willCollide = IsCollision(robot.model,qMatrix,object.model.faces{1,2},object.model.points{1,2},modelNormals,true);
+    willCollide = IsCollision(robot.model,qMatrix,object.model.faces{1,2},Points,modelNormals,true);
     if willCollide == 1
         result = true;
         return
