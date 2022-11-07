@@ -33,7 +33,7 @@ Bowl = GeneralModel('Bowl','BowlPly.ply', transl(-0.25,0.7,0), workspace);
 GlassEmpty = GeneralModel('GlassEmpty','EmptyGlassPly.ply', transl(0.25,0.7,0), workspace);
 GlassFull = GeneralModel('GlassFull','FullglassPly.ply', transl(0,0.25,-0.5), workspace);
 Lime = GeneralModel('Lime','LimeSlicePly.ply', transl(-0.25,0.7,0.04), workspace);
-Interrupt = GeneralModel('Interrupt','Interrupt.ply',transl(0.25,0.8,0.1),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
+Interrupt = GeneralModel('Interrupt','Interrupt.ply',transl(0.25,0.4,-0.5),workspace); %NEEDS TO BE LOCATED CORRECTLY AND MODEL CREATED
 drawnow
 
 hold on
@@ -144,7 +144,16 @@ qWaypoint = deg2rad([0 -133 110 25 33 0]);
 QMatrixCheck1 = jtraj(q1, qWaypoint, 25);
 QMatrixCheck2 = jtraj(qWaypoint, q2, 25);
 QMatrix = cat(1, QMatrixCheck1, QMatrixCheck2);
-obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
+% Interrupt.model.base = transl(0.25,0.8,0.1);
+% Interrupt.model.animate([0]);
+% drawnow
+% gui.EditFieldMotion.Value = "Failed pathing";
+% disp("Failed to identify safe path. Robot halting.")
+% while gui.EditFieldMotion.Value == "Failed pathing" 
+%     %Do nothing
+% end
+%Interrupt.model.base = transl(0,0.4,-0.5);
+%obstructionCheck(ur3, QMatrix, braccio, QMatrix2, BenchtopAndWall, Interrupt, linex, liney, linez, barrierFace,barrierVertex,barrierFaceNormals);
 for i = 1:50
     if gui.EditFieldMotion.Value == "Robots in motion"
         ur3.model.animate(QMatrix(i,:));
